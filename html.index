@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kolicoin igénylés</title>
+  <style>
+    body {
+      background-color: #6a0dad; /* lila háttér */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: sans-serif;
+      color: white;
+    }
+
+    button {
+      background-color: #8a2be2; /* világosabb lila gomb */
+      color: white;
+      padding: 20px 40px;
+      font-size: 20px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #9f47ff;
+    }
+  </style>
+</head>
+<body>
+  <button onclick="handleClick()">Kérem a Kolicoint</button>
+
+  <script>
+    const scriptURL = "https://docs.google.com/spreadsheets/d/1RBC0fq80KcvzGlDZSSpd38--btFfkCZLG3BB-e0wChc/edit?usp=sharing";
+
+    function handleClick() {
+      // Először megnézzük, van-e eltárolt név localStorage-ban
+      let username = localStorage.getItem('username');
+
+      if (!username) {
+        username = prompt('Kérlek, add meg a neved:');
+        if (!username) {
+          alert('Név megadása kötelező!');
+          return; // ha nincs név, nem folytatjuk
+        }
+        // Mentjük a nevet localStorage-ba, hogy legközelebb ne kérje
+        localStorage.setItem('username', username);
+      }
+
+      // Küldjük el a kérést a Google Script-nek, a nevet is továbbítva
+      fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'requestCoin', name: username }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.text())
+      .then(text => alert(text))
+      .catch(error => alert('Hiba történt: ' + error.message));
+    }
+  </script>
+</body>
+</html>
